@@ -1,0 +1,6 @@
+{
+  "buildCommand": "echo 'HTML puro, nenhuma build necessária'",
+  "framework": "html",
+  "public": ".",
+  "cleanUrls": false
+}

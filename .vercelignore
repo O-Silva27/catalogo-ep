@@ -1,0 +1,16 @@
+node_modules
+*.log
+.env
+.env.local
+.DS_Store
+.git
+.gitignore
+README.md
+COMO_COLOCAR_ONLINE.md
+servidor-sync.js
+DEPLOY_VERCEL.md
+TODO.md
+resolucao.py
+exe1.py
+nota-pedido.html
+nota-pedido-SIMPLIFICADA.html

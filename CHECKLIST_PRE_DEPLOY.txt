@@ -1,0 +1,204 @@
+🔐 CHECKLIST DE SEGURANÇA & ANTES DO DEPLOY
+
+═══════════════════════════════════════════════════════════
+
+✅ VERIFICAÇÕES DE SEGURANÇA
+
+□ Credenciais admin alteradas? (recomendado)
+   Edite em catalogo-EP.html linha ~240:
+   if(email === 'seu-email@email.com' && senha === 'sua-senha') {
+
+□ WhatsApp link está correto?
+   Procure por: wa.me/qr/ e coloque seu link
+
+□ HTTPS habilitado? (automático no Vercel)
+   ✓ Vercel força HTTPS
+
+□ localStorage está isolado?
+   ✓ Cada dispositivo tem seu próprio localStorage
+
+═══════════════════════════════════════════════════════════
+
+📊 ANTES DE COLOCAR ONLINE
+
+TESTES FUNCIONAIS:
+
+□ Teste no computador
+   - Abra catalogo-EP.html
+   - Teste login admin
+   - Adicione um produto
+   - Clique em sincronizar
+
+□ Teste no celular (WiFi local)
+   - Use http-server: npx http-server
+   - Acesse IP do computador
+   - Importe produtos
+   - Teste responsividade
+
+□ Teste em diferentes navegadores
+   - Chrome
+   - Firefox
+   - Safari (se tiver Mac)
+   - Edge
+
+TESTES DE RESPONSIVIDADE:
+
+□ Desktop (1920x1080)
+   - 3 colunas de cards
+   - Logo visível
+   - Todos os botões funcionam
+
+□ Tablet (768px)
+   - 2 colunas de cards
+   - Layout ajustado
+   - Toque funciona
+
+□ Mobile (375px)
+   - 1 coluna de cards
+   - Menu não quebra
+   - Botões clicáveis
+
+═══════════════════════════════════════════════════════════
+
+🎨 CUSTOMIZAÇÕES ANTES DO DEPLOY
+
+□ Logo customizada
+   - Use o painel admin (engrenagem)
+   - Recomendado 200x200px PNG
+   - Será salvo no localStorage
+
+□ Email WhatsApp correto
+   - Procure por: wa.me/qr/
+   - Coloque seu link correto
+
+□ Credenciais admin alteradas
+   - Email seu (não deixe a padrão)
+   - Senha forte (mínimo 8 caracteres)
+
+□ Produtos pré-cadastrados (opcional)
+   - Adicione alguns no localhost primeiro
+   - Use "exportar" para salvar
+   - Depois "importar" no site online
+
+═══════════════════════════════════════════════════════════
+
+⚡ PERFORMANCE
+
+□ Imagens otimizadas
+   - PNG: máx 500KB cada
+   - JPG: máx 300KB cada
+   - Recomendado: Compressor.io
+
+□ Cache habilitado
+   - Vercel faz automaticamente
+   - Clientes veem página 0.5s mais rápida
+
+□ CDN global
+   - Vercel distribui automaticamente
+   - Mundo inteiro acessa rápido
+
+═══════════════════════════════════════════════════════════
+
+🔒 PROTEÇÃO DE DADOS
+
+□ localStorage seguro
+   - Dados salvos no navegador do cliente
+   - NÃO no servidor (privado!)
+   - Cada dispositivo isolado
+
+□ Sem roubo de dados
+   - Você não armazena dados pessoais
+   - Sem banco de dados externo
+   - Tudo local no navegador
+
+□ HTTPS automático
+   - Todos os dados encriptados em trânsito
+   - Certificado SSL grátis do Vercel
+
+═══════════════════════════════════════════════════════════
+
+📈 MONITORAMENTO PÓS-DEPLOY
+
+Ativar Analytics (opcional):
+
+1. Vercel Analytics
+   - Dashboard automático
+   - Vê quantas visitas tem
+   - Qual navegador usam
+   - De qual país acessam
+
+2. Google Analytics (futuro)
+   - Adicione tracking ID
+   - Dados detalhados
+
+═══════════════════════════════════════════════════════════
+
+🆘 TROUBLESHOOTING
+
+Se os produtos não aparecem:
+□ Recarregue a página (Ctrl+F5)
+□ Limpe cache (Ctrl+Shift+Delete)
+□ Abra em modo privado/incógnito
+□ Teste em outro navegador
+
+Se o site carrega lento:
+□ Comprime imagens
+□ Reduz tamanho dos arquivos
+□ Verifica WiFi/internet
+
+Se login não funciona:
+□ Verifica email/senha
+□ Abre console (F12) e vê erros
+□ Tenta modo privado
+
+═══════════════════════════════════════════════════════════
+
+📋 CHECKLIST PRÉ-DEPLOY FINAL
+
+□ Testei em computador
+□ Testei em celular
+□ Testei em 2 navegadores
+□ Logo customizada (ou padrão)
+□ WhatsApp link correto
+□ Credenciais admin alteradas
+□ Produtos pré-cadastrados (opcional)
+□ Imagens otimizadas
+□ Sem console errors (F12)
+□ Tudo funciona offline também
+□ Pronto para 100% público
+
+═══════════════════════════════════════════════════════════
+
+✅ APROVADO PARA DEPLOY!
+
+Quando tudo estiver marcado:
+→ Siga PASSO_A_PASSO_VISUAL.txt
+→ Deploy no Vercel
+→ Compartilhe o link com clientes!
+
+═══════════════════════════════════════════════════════════
+
+💡 DICAS FINAIS
+
+1. Não compartilhe suas credenciais admin
+   Email/Senha: apenas você sabe
+
+2. Faça backup local
+   Salve seus produtos em JSON (botão roxo)
+
+3. Monitore o site
+   Verifica a cada semana se está funcionando
+
+4. Feedback de clientes
+   Peça sugestões de melhorias
+
+5. Mantenha atualizado
+   Novos produtos regularmente
+
+═══════════════════════════════════════════════════════════
+
+BOM SORTE! 🚀
+
+Seu catálogo profissional está pronto para o mundo!
+
+═══════════════════════════════════════════════════════════

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Interativo - Estofados Providência</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .modal-slide { animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 0px; }
+        .auth-container { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+        .logo-text { font-size: 2rem; font-weight: 900; letter-spacing: -0.02em; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <!-- MODAL DE LOGIN (Oculto até ser acionado) -->
+    <div id="authModal" class="fixed inset-0 z-50 hidden flex items-end sm:items-center">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="fecharLoginModal()"></div>
+        <div class="bg-white rounded-t-[40px] sm:rounded-[40px] w-full sm:max-w-sm p-6 relative z-10">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-slate-900 mb-2">Acesso Admin</h2>
+                <p class="text-slate-500 text-sm">Gerenciar catálogo</p>
+            </div>
+
+            <form onsubmit="validarLogin(event)" class="space-y-3">
+                <div>
+                    <label class="text-xs font-bold uppercase tracking-widest block mb-2 text-slate-700">Email</label>
+                    <input type="email" id="loginEmail" placeholder="seu@email.com" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-400">
+                </div>
+                <div>
+                    <label class="text-xs font-bold uppercase tracking-widest block mb-2 text-slate-700">Senha</label>
+                    <input type="password" id="loginSenha" placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-400">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-2xl transition-colors mt-4">
+                    ENTRAR
+                </button>
+            </form>
+
+            <div id="errorMsg" class="mt-3 text-red-400 text-sm font-semibold hidden text-center"></div>
+            
+            <button onclick="fecharLoginModal()" class="w-full mt-3 text-slate-500 font-semibold py-2 rounded-2xl hover:bg-slate-100 transition-colors">
+                Cancelar
+            </button>
+        </div>
+    </div>
+
+    <!-- APLICAÇÃO PRINCIPAL (Agora visível por padrão) -->
+    <div id="mainApp">
+        <!-- Header Principal -->
+        <header class="sticky top-0 z-40 glass px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <img id="logoImg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="EP" class="h-12 w-48 rounded-lg object-contain" style="display: none;">
+                <div id="logoText" class="flex flex-col">
+                    <h1 class="font-extrabold text-lg tracking-tight">
+                        <span class="text-blue-600 text-2xl">ep</span> Providência
+                    </h1>
+                    <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400">Catálogo Digital</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <a href="compartilhar-catalogo.html" class="bg-purple-500 p-2 rounded-full text-white hover:bg-purple-600" title="Sincronizar entre dispositivos">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12M8 11h12M8 15h12M3 7h.01M3 11h.01M3 15h.01M4 7a1 1 0 11-2 0 1 1 0 012 0zm0 4a1 1 0 11-2 0 1 1 0 012 0zm0 4a1 1 0 11-2 0 1 1 0 012 0z" />
+                    </svg>
+                </a>
+                <button id="btnLogin" onclick="abrirLoginModal()" class="bg-slate-100 p-2 rounded-full text-slate-600 hover:bg-slate-200" title="Acesso Admin">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </button>
+                <button id="btnAdmin" onclick="toggleAdmin()" class="bg-slate-100 p-2 rounded-full text-slate-600 hover:bg-slate-200 hidden" title="Gerenciar Produtos">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </button>
+                <button id="btnLogout" onclick="fazerLogout()" class="bg-red-100 p-2 rounded-full text-red-600 hover:bg-red-200 hidden" title="Sair">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                </button>
+                <a href="https://wa.me/qr/FOOSIXK2WHERC1" class="bg-green-500 p-2 rounded-full text-white shadow-lg hover:bg-green-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                    </svg>
+                </a>
+            </div>
+        </header>
+
+        <!-- Seção Admin (Oculta por padrão) -->
+        <section id="adminPanel" class="hidden bg-gradient-to-b from-slate-900 to-slate-800 text-white p-6 border-b border-slate-700">
+            <h2 class="text-lg font-bold mb-4 flex items-center justify-between">
+                ➕ Gerir Produtos
+                <button onclick="toggleAdmin()" class="text-slate-400 text-sm hover:text-white">Fechar X</button>
+            </h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase block mb-2">Logo da Loja (opcional)</label>
+                    <div class="flex gap-2">
+                        <input type="file" id="admLogo" accept="image/*" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white file:mr-4 file:bg-blue-600 file:border-0 file:rounded-lg file:px-3 file:py-2 file:text-sm file:font-bold file:text-white file:cursor-pointer hover:file:bg-blue-700">
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">Recomendado: imagem quadrada (200x200px)</p>
+                </div>
+                
+                <input type="text" id="admNome" placeholder="Nome do Produto (ex: Sofá Imperial Retrátil)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-400">
+                <input type="number" id="admPreco" placeholder="Preço (ex: 2890)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-400">
+                
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase block mb-2">Imagem do Produto</label>
+                    <div class="flex gap-2">
+                        <input type="file" id="admImg" accept="image/*" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white file:mr-4 file:bg-blue-600 file:border-0 file:rounded-lg file:px-3 file:py-2 file:text-sm file:font-bold file:text-white file:cursor-pointer hover:file:bg-blue-700">
+                    </div>
+                    <div id="previewImg" class="mt-2 hidden">
+                        <img id="imgPreview" class="max-w-xs h-32 object-cover rounded-xl">
+                    </div>
+                </div>
+
+                <textarea id="admDesc" placeholder="Descrição (deixe em branco para gerar com IA)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm h-20 text-white placeholder-slate-500 focus:outline-none focus:border-blue-400"></textarea>
+                
+                <button onclick="gerarDescricaoIA()" class="w-full bg-purple-600 hover:bg-purple-700 font-bold py-2 rounded-xl text-sm transition-colors">
+                    ✨ Gerar Descrição com IA
+                </button>
+
+                <input type="text" id="admPontos" placeholder="Diferenciais (separados por vírgula. ex: Molas Ensacadas, Espuma Premium)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-400">
+                
+                <button onclick="salvarProduto()" class="w-full bg-blue-600 font-bold py-3 rounded-xl hover:bg-blue-700 transition-colors">ADICIONAR AO CATÁLOGO</button>
+            </div>
+        </section>
+
+        <!-- Conteúdo Principal -->
+        <div id="welcomeHeader" class="px-6 py-8">
+            <h2 class="text-3xl font-extrabold leading-tight text-slate-800">
+                Qualidade e conforto <br>
+                <span class="text-blue-600">para o seu lar.</span>
+            </h2>
+            <p class="text-slate-500 mt-2 text-sm">Escolha o seu novo sofá e receba o conforto que a sua família merece.</p>
+        </div>
+
+        <!-- Informações de Pagamento -->
+        <div class="px-6 mb-6">
+            <div class="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-[28px] p-6">
+                <h3 class="font-bold text-slate-900 text-sm mb-4 flex items-center">
+                    💳 Formas de Pagamento Aceitas
+                </h3>
+                <div class="grid grid-cols-3 gap-3 mb-4">
+                    <div class="bg-white p-2 rounded-lg text-center text-[10px] font-bold shadow-sm">VISA</div>
+                    <div class="bg-white p-2 rounded-lg text-center text-[10px] font-bold shadow-sm">Mastercard</div>
+                    <div class="bg-white p-2 rounded-lg text-center text-[10px] font-bold shadow-sm">ELO</div>
+                    <div class="bg-white p-2 rounded-lg text-center text-[10px] font-bold shadow-sm">Hipercard</div>
+                    <div class="bg-white p-2 rounded-lg text-center text-[10px] font-bold shadow-sm">Hiper</div>
+                    <div class="bg-white p-2 rounded-lg text-center text-[10px] font-bold shadow-sm">Amex</div>
+                    <div class="bg-white p-2 rounded-lg text-center text-[10px] font-bold shadow-sm">Diners</div>
+                    <div class="bg-white p-2 rounded-lg text-center text-[10px] font-bold shadow-sm">CABAL</div>
+                    <div class="bg-white p-2 rounded-lg text-center text-[10px] font-bold shadow-sm">Sodexo</div>
+                </div>
+                <p class="text-xs text-slate-600 text-center">Vale Alimentação e Vale Refeição também aceitamos!</p>
+                <p class="text-xs text-slate-600 text-center mt-2 flex items-center justify-center gap-2">
+                    <span>📱 E pagamento com código QR</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Lista de Produtos -->
+        <main id="listaProdutos" class="px-6 pb-24 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <!-- Produtos injetados via JS -->
+        </main>
+
+        <!-- Modal de Detalhes -->
+        <div id="productModal" class="fixed inset-0 z-50 hidden flex flex-col justify-end">
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal()"></div>
+            <div class="bg-white rounded-t-[40px] max-h-[92vh] overflow-y-auto modal-slide relative z-10">
+                <div class="sticky top-0 bg-white p-4 flex justify-center border-b">
+                    <div class="w-12 h-1 bg-slate-200 rounded-full"></div>
+                </div>
+                <div id="modalBody" class="px-8 pb-32"></div>
+                <div class="fixed bottom-0 left-0 right-0 p-6 bg-white/90 backdrop-blur-md border-t flex gap-3">
+                    <a href="https://wa.me/qr/FOOSIXK2WHERC1" class="flex-1 bg-green-500 text-white font-bold py-4 rounded-2xl text-center shadow-lg hover:bg-green-600 transition-colors text-sm">
+                        Encomendar via WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de Funcionamento -->
+    <script>
+        let isAdmin = false;
+        let currentImageBase64 = null;
+        
+        // Função para definir logo customizado
+        function definirLogo(base64) {
+            const logoImg = document.getElementById('logoImg');
+            const logoText = document.getElementById('logoText');
+            if(base64) {
+                logoImg.src = base64;
+                logoImg.style.display = '';
+                logoText.style.display = 'none';
+                localStorage.setItem('providencia_logo', base64);
+            }
+        }
+        
+        // Sincronizar dados entre abas/dispositivos
+        function sincronizarDados() {
+            const dbLocal = JSON.parse(localStorage.getItem('providencia_catalogo')) || [];
+            const logoLocal = localStorage.getItem('providencia_logo');
+            db = dbLocal;
+            if(logoLocal) {
+                definirLogo(logoLocal);
+            }
+            renderizar();
+        }
+
+        // Carregar logo do localStorage ao iniciar
+        window.addEventListener('DOMContentLoaded', function() {
+            sincronizarDados();
+        });
+        
+        let db = JSON.parse(localStorage.getItem('providencia_catalogo')) || [
+            {
+                id: Date.now(),
+                nome: 'Sofá Imperial Retrátil',
+                preco: '2.890,00',
+                img: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwwUAxUTAwwUgcMERwcGBwcGBwcIDQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwIDAgKCAwKCgwKDAoMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAAoACgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/2Q==',
+                desc: 'O sofá Imperial foi desenhado para quem não abre mão do luxo. Com espumas de alta densidade e molas ensacadas, ele transforma qualquer sala num cinema particular. Perfeito para família que valoriza qualidade e conforto duradouro.',
+                pontos: ['Molas Ensacadas', 'Espuma D33 Soft', 'Tecido Suede Premium']
+            }
+        ];
+
+        // Autenticação
+        function validarLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const senha = document.getElementById('loginSenha').value;
+
+            if(email === 'jocin991@gmail.com' && senha === 'Meusbbs03') {
+                isAdmin = true;
+                localStorage.setItem('admin_logged', 'true');
+                fecharLoginModal();
+                atualizarBotoesAdmin();
+                renderizar();
+            } else {
+                document.getElementById('errorMsg').classList.remove('hidden');
+                document.getElementById('errorMsg').textContent = '❌ Email ou senha incorretos';
+                setTimeout(() => {
+                    document.getElementById('errorMsg').classList.add('hidden');
+                }, 3000);
+            }
+        }
+
+        function abrirLoginModal() {
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+
+        function fecharLoginModal() {
+            document.getElementById('authModal').classList.add('hidden');
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginSenha').value = '';
+        }
+
+        function atualizarBotoesAdmin() {
+            if(isAdmin) {
+                document.getElementById('btnLogin').classList.add('hidden');
+                document.getElementById('btnAdmin').classList.remove('hidden');
+                document.getElementById('btnLogout').classList.remove('hidden');
+            } else {
+                document.getElementById('btnLogin').classList.remove('hidden');
+                document.getElementById('btnAdmin').classList.add('hidden');
+                document.getElementById('btnLogout').classList.add('hidden');
+            }
+        }
+
+        function fazerLogout() {
+            isAdmin = false;
+            localStorage.removeItem('admin_logged');
+            document.getElementById('adminPanel').classList.add('hidden');
+            atualizarBotoesAdmin();
+            renderizar();
+        }
+
+        // Upload de Imagem
+        document.addEventListener('DOMContentLoaded', function() {
+            // Logo upload
+            const logoInput = document.getElementById('admLogo');
+            if(logoInput) {
+                logoInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if(file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            definirLogo(event.target.result);
+                            alert('✅ Logo atualizado com sucesso!');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            // Produto image upload
+            const imgInput = document.getElementById('admImg');
+            if(imgInput) {
+                imgInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if(file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            currentImageBase64 = event.target.result;
+                            document.getElementById('previewImg').src = currentImageBase64;
+                            document.getElementById('previewImg').classList.remove('hidden');
+                            document.getElementById('previewImg').parentElement.classList.remove('hidden');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        });
+
+        // IA Simples para Gerar Descrições
+        function gerarDescricaoIA() {
+            const nome = document.getElementById('admNome').value;
+            if(!nome) {
+                alert('Preencha o nome do produto primeiro!');
+                return;
+            }
+
+            const verbosPositivos = [
+                'transforma', 'revoluciona', 'reinventa', 'eleva', 'potencializa', 
+                'amplifica', 'realça', 'aperfeiçoa', 'enaltece'
+            ];
+
+            const beneficios = [
+                'conforto incomparável', 'elegância atemporal', 'qualidade duradoura',
+                'estilo refinado', 'aconchego familiar', 'sofisticação no lar',
+                'bem-estar garantido', 'beleza e resistência'
+            ];
+
+            const materiais = [
+                'espumas de alta densidade', 'tecidos premium selecionados', 
+                'estrutura reforçada', 'acabamento impecável', 'fibras nobres'
+            ];
+
+            const finalizacoes = [
+                'Perfeito para momentos em família.',
+                'Ideal para quem valoriza qualidade.',
+                'A escolha de quem não abre mão do conforto.',
+                'Investimento que dura gerações.',
+                'Transforme sua sala em um espaço de aconchego.'
+            ];
+
+            const verbo = verbosPositivos[Math.floor(Math.random() * verbosPositivos.length)];
+            const beneficio = beneficios[Math.floor(Math.random() * beneficios.length)];
+            const material = materiais[Math.floor(Math.random() * materiais.length)];
+            const finalizacao = finalizacoes[Math.floor(Math.random() * finalizacoes.length)];
+
+            const descricao = `O ${nome} ${verbo} seu espaço, trazendo ${beneficio} para o ambiente. Com ${material}, garante durabilidade e estilo incomparáveis. ${finalizacao}`;
+
+            document.getElementById('admDesc').value = descricao;
+        }
+
+        function renderizar() {
+            const container = document.getElementById('listaProdutos');
+            container.innerHTML = '';
+            
+            db.forEach(p => {
+                container.innerHTML += `
+                    <div class="bg-white rounded-[24px] overflow-hidden shadow-sm border border-slate-100 group">
+                        <div class="relative aspect-square overflow-hidden cursor-pointer" onclick="abrirDetalhes(${p.id})">
+                            <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                            <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded-full text-[9px] font-black text-blue-600 shadow-sm">NOVIDADE</div>
+                        </div>
+                        <div class="p-4">
+                            <div class="flex justify-between items-start mb-2 gap-2">
+                                <h3 class="font-bold text-slate-800 text-sm leading-tight">${p.nome}</h3>
+                                ${isAdmin ? `<button onclick="deletarProduto(${p.id})" class="text-red-400 opacity-100 group-hover:opacity-100 transition-opacity p-1 hover:text-red-600 flex-shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>` : ''}
+                            </div>
+                            <div class="flex justify-between items-end gap-2">
+                                <div>
+                                    <p class="text-[9px] text-slate-400 uppercase font-bold tracking-widest">Valor</p>
+                                    <p class="text-base font-black text-slate-900">R$ ${p.preco}</p>
+                                </div>
+                                <button onclick="abrirDetalhes(${p.id})" class="bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-slate-800 transition-colors flex-shrink-0">Ver</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if(db.length === 0) {
+                container.innerHTML = '<p class="col-span-full text-center text-slate-500 py-12">Nenhum produto cadastrado ainda.</p>';
+            }
+        }
+
+        function salvarProduto() {
+            const nome = document.getElementById('admNome').value;
+            const precoRaw = document.getElementById('admPreco').value;
+            const img = currentImageBase64 || 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=800';
+            const desc = document.getElementById('admDesc').value;
+            const pontos = document.getElementById('admPontos').value.split(',').map(s => s.trim()).filter(s => s);
+
+            if(!nome || !precoRaw) {
+                alert("Preencha ao menos Nome e Preço!");
+                return;
+            }
+
+            if(!currentImageBase64) {
+                alert("Selecione uma imagem do seu dispositivo!");
+                return;
+            }
+
+            const preco = parseFloat(precoRaw).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            
+            db.push({ 
+                id: Date.now(), 
+                nome, 
+                preco, 
+                img, 
+                desc: desc || 'Produto de qualidade premium da Estofados Providência', 
+                pontos: pontos.length > 0 ? pontos : ['Qualidade Premium', 'Durabilidade Garantida']
+            });
+            
+            localStorage.setItem('providencia_catalogo', JSON.stringify(db));
+            
+            // Limpar Campos
+            document.querySelectorAll('#adminPanel input[type="text"], #adminPanel input[type="number"], #adminPanel textarea').forEach(i => i.value = '');
+            document.getElementById('admImg').value = '';
+            document.getElementById('previewImg').parentElement.classList.add('hidden');
+            currentImageBase64 = null;
+            renderizar();
+            alert("✅ Produto adicionado com sucesso!");
+        }
+
+        function deletarProduto(id) {
+            if(confirm("Deseja remover este produto do catálogo?")) {
+                db = db.filter(p => p.id !== id);
+                localStorage.setItem('providencia_catalogo', JSON.stringify(db));
+                renderizar();
+            }
+        }
+
+        function abrirDetalhes(id) {
+            const p = db.find(item => item.id === id);
+            const body = document.getElementById('modalBody');
+            
+            body.innerHTML = `
+                <div class="mt-4 mb-8 rounded-[32px] overflow-hidden shadow-2xl">
+                    <img src="${p.img}" class="w-full max-h-80 object-cover">
+                </div>
+                <h2 class="text-3xl font-black text-slate-900 mb-2">${p.nome}</h2>
+                <p class="text-blue-600 font-bold mb-6 flex items-center">
+                    <span class="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>
+                    Garantia de Qualidade Providência
+                </p>
+                
+                <div class="bg-blue-50 p-6 rounded-[28px] mb-8 border border-blue-100">
+                    <p class="text-slate-700 text-sm leading-relaxed">"${p.desc}"</p>
+                </div>
+
+                <div class="space-y-4 mb-10">
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Diferenciais do Produto</h4>
+                    <div class="grid grid-cols-1 gap-3">
+                        ${p.pontos.map(pt => `
+                            <div class="flex items-center gap-3 bg-white p-3 rounded-2xl shadow-sm border border-slate-50">
+                                <div class="bg-green-100 p-1 rounded-full text-green-600">
+                                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                </div>
+                                <span class="text-sm font-semibold text-slate-700">${pt}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 text-white p-6 rounded-[32px] flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Preço Especial</p>
+                        <p class="text-3xl font-black">R$ ${p.preco}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] text-blue-400 font-bold uppercase">Ou 10x de</p>
+                        <p class="text-lg font-bold">R$ ${(parseFloat(p.preco.replace('.','').replace(',','.'))/10).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('productModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function toggleAdmin() {
+            if(!isAdmin) return;
+            const panel = document.getElementById('adminPanel');
+            panel.classList.toggle('hidden');
+        }
+
+        // Verificar se já está logado
+        if(localStorage.getItem('admin_logged') === 'true') {
+            isAdmin = true;
+        }
+        atualizarBotoesAdmin();
+        sincronizarDados();
+        
+        // Listener para sincronizar dados quando localStorage muda (ex: outra aba adicionou produto)
+        window.addEventListener('storage', function(e) {
+            if(e.key === 'providencia_catalogo' || e.key === 'providencia_logo') {
+                sincronizarDados();
+            }
+        });
+    </script>
+</body>
+</html>

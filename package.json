@@ -1,0 +1,12 @@
+{
+  "name": "catalogo-ep",
+  "version": "1.0.0",
+  "description": "Catálogo Digital Interativo - Estofados Providência",
+  "main": "catalogo-EP.html",
+  "scripts": {
+    "dev": "npx http-server -p 3000"
+  },
+  "keywords": ["catalogo", "ecommerce"],
+  "author": "Estofados Providência",
+  "license": "MIT"
+}

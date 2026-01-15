@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compartilhador de Catálogo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Arial', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-100 p-6">
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
+        <h1 class="text-2xl font-bold mb-6 text-slate-900">📤 Compartilhe seu Catálogo</h1>
+        
+        <div class="space-y-4">
+            <div>
+                <h2 class="text-lg font-bold text-slate-800 mb-2">1️⃣ Exportar Dados</h2>
+                <p class="text-slate-600 text-sm mb-3">Copie seu catálogo e compartilhe com outros:</p>
+                <button onclick="exportarDados()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">
+                    📋 Copiar Catálogo
+                </button>
+                <div id="exportMsg" class="text-green-600 text-sm mt-2 hidden">✅ Copiado!</div>
+            </div>
+            
+            <hr class="my-6">
+            
+            <div>
+                <h2 class="text-lg font-bold text-slate-800 mb-2">2️⃣ Importar Dados</h2>
+                <p class="text-slate-600 text-sm mb-3">Cole dados de outro dispositivo:</p>
+                <textarea id="importInput" placeholder="Cole os dados aqui..." class="w-full border border-slate-300 rounded-lg p-3 text-sm h-32 focus:outline-none focus:border-blue-400"></textarea>
+                <button onclick="importarDados()" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 mt-3">
+                    ✅ Importar
+                </button>
+                <div id="importMsg" class="text-green-600 text-sm mt-2 hidden"></div>
+            </div>
+            
+            <hr class="my-6">
+            
+            <div>
+                <h2 class="text-lg font-bold text-slate-800 mb-2">📊 Informações</h2>
+                <div id="info" class="bg-slate-100 p-4 rounded-lg text-sm text-slate-700">
+                    <p>Carregando...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function atualizarInfo() {
+            const catalogo = JSON.parse(localStorage.getItem('providencia_catalogo')) || [];
+            const logo = localStorage.getItem('providencia_logo') ? 'Sim' : 'Não';
+            document.getElementById('info').innerHTML = `
+                <p><strong>Produtos:</strong> ${catalogo.length}</p>
+                <p><strong>Logo:</strong> ${logo}</p>
+                <p><strong>Última atualização:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+            `;
+        }
+
+        function exportarDados() {
+            const catalogo = localStorage.getItem('providencia_catalogo') || '[]';
+            const logo = localStorage.getItem('providencia_logo') || '';
+            
+            const dados = {
+                catalogo: JSON.parse(catalogo),
+                logo: logo,
+                exportado: new Date().toLocaleString('pt-BR')
+            };
+            
+            const json = JSON.stringify(dados, null, 2);
+            
+            // Copiar para clipboard
+            navigator.clipboard.writeText(json).then(() => {
+                const msg = document.getElementById('exportMsg');
+                msg.classList.remove('hidden');
+                setTimeout(() => msg.classList.add('hidden'), 2000);
+                atualizarInfo();
+            });
+        }
+
+        function importarDados() {
+            const input = document.getElementById('importInput').value;
+            if(!input) {
+                alert('Cole os dados primeiro!');
+                return;
+            }
+            
+            try {
+                const dados = JSON.parse(input);
+                
+                if(dados.catalogo) {
+                    localStorage.setItem('providencia_catalogo', JSON.stringify(dados.catalogo));
+                }
+                
+                if(dados.logo) {
+                    localStorage.setItem('providencia_logo', dados.logo);
+                }
+                
+                const msg = document.getElementById('importMsg');
+                msg.textContent = `✅ Importado! ${dados.catalogo?.length || 0} produtos`;
+                msg.classList.remove('hidden');
+                
+                document.getElementById('importInput').value = '';
+                atualizarInfo();
+                
+                setTimeout(() => {
+                    alert('✅ Dados importados com sucesso! Recarregue o catálogo.');
+                    msg.classList.add('hidden');
+                }, 2000);
+            } catch(e) {
+                alert('❌ Formato inválido: ' + e.message);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', atualizarInfo);
+    </script>
+</body>
+</html>

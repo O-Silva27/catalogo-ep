@@ -1,0 +1,247 @@
+🎯 PASSO-A-PASSO VISUAL - DEPLOY NO VERCEL
+
+═══════════════════════════════════════════════════════════
+
+PASSO 1: CRIAR CONTA GITHUB
+─────────────────────────────────────────────────────────
+
+1. Abra: https://github.com/signup
+
+2. Preencha:
+   ┌─────────────────────────────────┐
+   │ Email: seu-email@gmail.com      │
+   │ Password: sua-senha             │
+   │ Username: seu-usuario           │
+   └─────────────────────────────────┘
+
+3. Clique em "Create account"
+
+4. Confirme o email enviado
+
+✅ Você agora tem conta GitHub!
+
+═══════════════════════════════════════════════════════════
+
+PASSO 2: CRIAR REPOSITÓRIO
+─────────────────────────────────────────────────────────
+
+1. Após logar, clique no "+" no canto superior direito
+
+2. Clique em "New repository"
+
+3. Preencha:
+   ┌─────────────────────────────────┐
+   │ Repository name: catalogo-ep    │
+   │                                 │
+   │ Description:                    │
+   │ Catálogo Digital                │
+   │ Estofados Providência           │
+   │                                 │
+   │ ○ Public (selecionado)          │
+   │ ○ Private                       │
+   │                                 │
+   │ ☑ Add a README file             │
+   └─────────────────────────────────┘
+
+4. Clique em "Create repository"
+
+✅ Repositório criado!
+
+═══════════════════════════════════════════════════════════
+
+PASSO 3: FAZER UPLOAD DOS ARQUIVOS
+─────────────────────────────────────────────────────────
+
+1. Na página do repositório, clique em "Add file"
+
+2. Selecione "Upload files"
+
+3. ARRASTE E SOLTE estes arquivos:
+   
+   ✓ catalogo-EP.html
+   ✓ compartilhar-catalogo.html
+   ✓ index.html
+   ✓ package.json
+   ✓ vercel.json
+   ✓ .gitignore
+   ✓ .vercelignore
+
+4. Clique em "Commit changes"
+
+✅ Arquivos no GitHub!
+
+═══════════════════════════════════════════════════════════
+
+PASSO 4: CRIAR CONTA VERCEL
+─────────────────────────────────────────────────────────
+
+1. Abra: https://vercel.com/signup
+
+2. Clique em "Continue with GitHub"
+
+3. Autorize o Vercel (aparece um popup)
+
+4. Preencha dados básicos
+
+✅ Conta Vercel criada!
+
+═══════════════════════════════════════════════════════════
+
+PASSO 5: FAZER DEPLOY
+─────────────────────────────────────────────────────────
+
+1. Na dashboard do Vercel, clique em "Add New Project"
+
+2. Clique em "Import Project"
+
+3. Procure por "catalogo-ep" e clique
+
+4. Configurações:
+   ┌──────────────────────────────────┐
+   │ Framework Preset: Other          │
+   │ Build Command: (deixa em branco) │
+   │ Output Directory: .              │
+   │ Environment Variables: (deixa)   │
+   └──────────────────────────────────┘
+
+5. Clique em "Deploy"
+
+✅ DEPLOY INICIADO!
+
+═══════════════════════════════════════════════════════════
+
+PASSO 6: ESPERAR (2-3 MINUTOS)
+─────────────────────────────────────────────────────────
+
+Você verá:
+
+   ⏳ Building...
+   ✅ Built Successfully
+   ✅ Deploy Complete!
+
+═══════════════════════════════════════════════════════════
+
+PASSO 7: ✅ PRONTO!
+─────────────────────────────────────────────────────────
+
+Seu site está ONLINE em:
+
+   ╔═══════════════════════════════════╗
+   ║ https://catalogo-ep.vercel.app   ║
+   ╚═══════════════════════════════════╝
+
+📱 Teste em:
+   • Computador
+   • Celular
+   • Tablet
+
+═══════════════════════════════════════════════════════════
+
+PASSO 8: ADICIONAR PRODUTOS (TESTE)
+─────────────────────────────────────────────────────────
+
+1. Clique no ícone de informação (i) no cabeçalho
+
+2. Faça login:
+   Email: jocin991@gmail.com
+   Senha: Meusbbs03
+
+3. Clique na engrenagem ⚙️
+
+4. Preencha:
+   • Nome do Produto
+   • Preço
+   • Imagem (upload)
+   • Descrição
+
+5. Clique "ADICIONAR AO CATÁLOGO"
+
+✅ Produto adicionado em tempo real!
+
+═══════════════════════════════════════════════════════════
+
+PASSO 9: SINCRONIZAR ENTRE DISPOSITIVOS
+─────────────────────────────────────────────────────────
+
+1. Computador: Clique no botão roxo 🟣 (sincronizar)
+
+2. Clique em "📋 Copiar Catálogo"
+
+3. Vá para seu celular (mesma WiFi)
+
+4. Abra: https://catalogo-ep.vercel.app
+
+5. Clique no botão roxo 🟣
+
+6. Cole os dados
+
+7. Clique "✅ Importar"
+
+✅ Produtos sincronizados!
+
+═══════════════════════════════════════════════════════════
+
+COMPARTILHAR COM CLIENTES
+─────────────────────────────────────────────────────────
+
+Envie este link:
+
+   https://catalogo-ep.vercel.app
+
+Seus clientes podem:
+   ✓ Ver produtos
+   ✓ Consultar preços
+   ✓ Contatar via WhatsApp
+   ✓ Ver em qualquer dispositivo
+
+═══════════════════════════════════════════════════════════
+
+🎉 PARABÉNS! SEU CATÁLOGO ESTÁ ONLINE!
+
+═══════════════════════════════════════════════════════════
+
+DICAS IMPORTANTES:
+
+1. ⚡ O Vercel atualiza automaticamente se você fizer
+   push de novos arquivos
+
+2. 🔒 Suas credenciais admin são seguras
+   (Email: jocin991@gmail.com)
+
+3. 📱 Site funciona perfeitamente em mobile
+
+4. 🌍 Seus clientes podem acessar de qualquer lugar
+
+5. 💰 Totalmente GRÁTIS (enquanto for assim)
+
+═══════════════════════════════════════════════════════════
+
+PRÓXIMAS MELHORIAS (FUTURO):
+
+□ Domínio customizado (ex: estofadosprovidencia.com.br)
+□ WhatsApp Business Integration
+□ Sistema de pagamento (MercadoPago, Stripe)
+□ Chat ao vivo
+□ Analytics (Google Analytics)
+□ Email de notificação
+
+═══════════════════════════════════════════════════════════
+
+SUPORTE:
+
+Se algo não funcionar:
+
+1. Abra DevTools (F12)
+2. Vá em Console
+3. Procure por erros em vermelho
+4. Recarga a página (Ctrl+F5)
+5. Limpa cache (Ctrl+Shift+Delete)
+
+═══════════════════════════════════════════════════════════
+
+VOCÊ CONSEGUIU! 🚀
+
+Seu catálogo profissional agora está acessível
+para clientes em todo o mundo!
+
+═══════════════════════════════════════════════════════════

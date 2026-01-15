@@ -1,0 +1,19 @@
+# Ignore dependencies
+node_modules/
+npm-debug.log
+.env
+.env.local
+.DS_Store
+
+# Build outputs
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
