@@ -237,7 +237,13 @@
             const email = document.getElementById('loginEmail').value;
             const senha = document.getElementById('loginSenha').value;
 
-            if(email === 'jocin991@gmail.com' && senha === 'Meusbbs03') {
+            // ALTERE ESSAS CREDENCIAIS!
+            // Abra este arquivo em um editor, procure por "ADMIN_EMAIL" e "ADMIN_SENHA"
+            // e coloque seus dados pessoais
+            const ADMIN_EMAIL = 'pedroroblofire@gmail.com';
+            const ADMIN_SENHA = '21Pedro12';
+
+            if(email === ADMIN_EMAIL && senha === ADMIN_SENHA) {
                 isAdmin = true;
                 localStorage.setItem('admin_logged', 'true');
                 fecharLoginModal();
